@@ -8,7 +8,7 @@ def run_server():
     port = 8000
 
     # Vincula o socket para um especifico endereco e porta
-    server.bind(server_ip, port)
+    server.bind((server_ip, port))
 
     # Escuta as conexões recebidas
     server.listen(0)
