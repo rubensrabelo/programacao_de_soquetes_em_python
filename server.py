@@ -32,7 +32,7 @@ def run_server():
             break
         print(f"Received: {request}")
         response = "accepted".encode("utf-8")
-        # Converte e envia a resposta de aceitação ao cliente 
+        # Converte e envia a resposta de aceitação ao cliente
         client_socket.send(response)
 
     # Fecha o socket com o client
