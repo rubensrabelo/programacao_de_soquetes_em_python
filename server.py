@@ -41,4 +41,5 @@ def run_server():
     server.close()
 
 
-run_server()
+if __name__ == "__main__":
+    run_server()
