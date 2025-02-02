@@ -2,17 +2,51 @@ import socket
 
 
 def run_client():
-    # Cria um objeto socket
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_ip = "127.0.0.1"
     port = 8000
 
-    # Estabelecendo conexão com o servidor
     client.connect((server_ip, port))
 
     try:
+        response = client.recv(1024).decode("utf-8")
+        print(response)
+        choice = input(">> ")
+        client.send(choice.encode("utf-8"))
+
+        if choice.lower() == "no":
+            response = client.recv(1024).decode("utf-8")
+            print(response)
+            email = input(">> ")
+            client.send(email.encode("utf-8"))
+
+            response = client.recv(1024).decode("utf-8")
+            print(response)
+            password = input(">> ")
+            client.send(password.encode("utf-8"))
+
+            response = client.recv(1024).decode("utf-8")
+            print(response)
+
+        response = client.recv(1024).decode("utf-8")
+        print(response)
+        email = input(">> ")
+        client.send(email.encode("utf-8"))
+
+        response = client.recv(1024).decode("utf-8")
+        print(response)
+        password = input(">> ")
+        client.send(password.encode("utf-8"))
+
+        auth_response = client.recv(1024).decode("utf-8")
+        if auth_response == "denied":
+            print("Login failed. Closing connection.")
+            client.close()
+            return
+
+        print("Login successful!")
+
         while True:
-            # Insere a mensagem e envia ao servidor
             msg = input("Enter a message: ")
             client.send(msg.encode("utf-8")[:1024])
 
@@ -20,7 +54,7 @@ def run_client():
             response = response.decode("utf-8")
 
             if not response:
-                print("Server did not respond to connection")
+                print("SServer did not respond")
                 break
 
             if response.lower() == "closed":
