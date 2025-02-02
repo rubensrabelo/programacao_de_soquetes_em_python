@@ -19,6 +19,10 @@ def run_client():
             response = client.recv(1024)
             response = response.decode("utf-8")
 
+            if not response:
+                print("Server did not respond to connection")
+                break
+
             if response.lower() == "closed":
                 break
 
@@ -26,8 +30,9 @@ def run_client():
     except Exception as e:
         print(f"Error: {e}")
     finally:
-        client.close()
-        print("Connection to server closed")
+        if "server" in locals():
+            client.close()
+            print("Connection to server closed")
 
 
 if __name__ == "__main__":
