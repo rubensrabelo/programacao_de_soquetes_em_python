@@ -47,7 +47,7 @@ def run_server():
                 client_socket,
                 addr,
             ))
-            thread.start
+            thread.start()
     except Exception as e:
         print(f"Error: {e}")
     finally:
