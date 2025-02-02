@@ -1,5 +1,31 @@
 import socket
 import threading
+import pandas as pd
+import bcrypt
+import os
+
+USERS_FILE = "users.csv"
+
+if not os.path.exists(USERS_FILE):
+    df = pd.DataFrame(columns=["email", "password"])
+    df.to_csv(USERS_FILE, index=False)
+
+
+def hash_password(password):
+    return bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+        ).decode("utf-8")
+
+
+def check_password(email, password):
+    df = pd.read_csv(USERS_FILE)
+    user = df[df["email"] == email]
+    if not user.empty:
+        stored_hash = user["password"].values[0]
+        return bcrypt.checkpw(password.encode("utf-8"),
+                              stored_hash.encode("utf-8"))
+    return False
 
 
 def handle_client(client_socket, addr):
