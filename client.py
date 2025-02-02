@@ -50,11 +50,10 @@ def run_client():
             msg = input("Enter a message: ")
             client.send(msg.encode("utf-8")[:1024])
 
-            response = client.recv(1024)
-            response = response.decode("utf-8")
+            response = client.recv(1024).decode("utf-8")
 
             if not response:
-                print("SServer did not respond")
+                print("Server did not respond")
                 break
 
             if response.lower() == "closed":
