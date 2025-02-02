@@ -1,44 +1,57 @@
 import socket
+import threading
+
+
+def handle_client(client_socket, addr):
+    try:
+        while True:
+            # Recebe e tranforma em string a mensagem do cliente
+            request = client_socket.recv(1024).decode("utf-8")
+            if request.lower() == "close":
+                client_socket.send("closed".encode("utf-8"))
+                break
+            print(f"Received: {request}")
+
+            # converte e envia resposta de aceitação ao cliente
+            response = "accepted"
+            client_socket.send(response.encode("utf-8"))
+    except Exception as e:
+        print(f"Error when handling client: {e}")
+    finally:
+        client_socket.close()
+        print(f"Connection to client ({addr[0]}:{addr[1]}) closed")
 
 
 def run_server():
-    # Cria um objeto socket
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_ip = "127.0.0.1"
     port = 8000
 
-    # Vincula o socket para um especifico endereco e porta
-    server.bind((server_ip, port))
+    try:
+        # Cria um objeto socket
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Escuta as conexões recebidas
-    server.listen(0)
-    print(f"Listening on {server_ip}:{port}")
+        # Vincula o socket para um especifico endereco e porta
+        server.bind((server_ip, port))
 
-    # Aceitar conexoes de entrada
-    client_socket, client_address = server.accept()
-    print(f"Accepted connection from {client_address[0]}:{client_address[1]}")
+        # Escuta as conexões recebidas
+        server.listen()
+        print(f"Listening on {server_ip}:{port}")
 
-    # Recebe dados do cliente
-    while True:
-        request = client_socket.recv(1024)
-        request = request.decode("utf-8")  # Converte bytes para string
+        # Recebe dados do cliente
+        while True:
+            # Aceitar conexoes de entrada
+            client_socket, addr = server.accept()
+            print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
-        # Se recebemos "close" do client, entao saimos do loop
-        # e fechamos a conexao
-        if request.lower() == "close":
-            # Envia resposta ao cliente que reconhece
-            # que a conexão deve ser fechada e sair do loop
-            client_socket.send("closed".encode("utf-8"))
-            break
-        print(f"Received: {request}")
-        response = "accepted".encode("utf-8")
-        # Converte e envia a resposta de aceitação ao cliente
-        client_socket.send(response)
-
-    # Fecha o socket com o client
-    client_socket.close()
-    print("Connection to client closed")
-    server.close()
+            thread = threading.Thread(target=handle_client, args=(
+                client_socket,
+                addr,
+            ))
+            thread.start
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        server.close()
 
 
 if __name__ == "__main__":
