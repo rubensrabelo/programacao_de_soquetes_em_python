@@ -75,15 +75,17 @@ def handle_client(client_socket, addr):
             client_socket.send("denied".encode("utf-8"))
             client_socket.close()
             return
+
         while True:
             request = client_socket.recv(1024).decode("utf-8")
+            print(request)
             if request.lower() == "close":
                 client_socket.send("closed".encode("utf-8"))
                 break
-        print(f"Received from {email}: {request}")
+            print(f"Received from {email}: {request}")
 
-        response = "accepted"
-        client_socket.send(response.encode("utf-8"))
+            response = "accepted"
+            client_socket.send(response.encode("utf-8"))
     except Exception as e:
         print(f"Error when handling client: {e}")
     finally:
