@@ -28,19 +28,62 @@ def check_password(email, password):
     return False
 
 
+def register_user(email, password):
+    if check_user_exists(email):
+        return False
+    hashed_password = hash_password(password)
+    with open(USERS_FILE, "a", newline="", encoding="utf-8") as file:
+        file.write(f"{email},{hashed_password}\n")
+    return True
+
+
+def check_user_exists(email):
+    df = pd.read_csv(USERS_FILE)
+    return email in df["email"].values
+
+
 def handle_client(client_socket, addr):
     try:
+        client_socket.send("Do you have an account? (yes/no): "
+                           .encode("utf-8"))
+        choice = client_socket.recv(1024).decode("utf-8").strip().lower()
+
+        if choice == "no":
+            client_socket.send("Enter email: ".encode("utf-8"))
+            email = (client_socket.recv(1024).decode("utf-8")
+                     .strip().lower())
+            client_socket.send("Enter password: ".encode("utf-8"))
+            password = client_socket.recv(1024).decode("utf-8").strip()
+
+            if register_user(email, password):
+                client_socket.send("Registration successful! Please log in."
+                                   .encode("utf-8"))
+            else:
+                client_socket.send("Email already registered. Try logging in."
+                                   .encode("utf-8"))
+                client_socket.close()
+                return
+
+        client_socket.send("Enter email: ".encode("utf-8"))
+        email = client_socket.recv(1024).decode("utf-8").strip()
+        client_socket.send("Enter password: ".encode("utf-8"))
+        password = client_socket.recv(1024).decode("utf-8").strip()
+
+        if check_password(email, password):
+            client_socket.send("authenticated".encode("utf-8"))
+        else:
+            client_socket.send("denied".encode("utf-8"))
+            client_socket.close()
+            return
         while True:
-            # Recebe e tranforma em string a mensagem do cliente
             request = client_socket.recv(1024).decode("utf-8")
             if request.lower() == "close":
                 client_socket.send("closed".encode("utf-8"))
                 break
-            print(f"Received: {request}")
+        print(f"Received from {email}: {request}")
 
-            # converte e envia resposta de aceitação ao cliente
-            response = "accepted"
-            client_socket.send(response.encode("utf-8"))
+        response = "accepted"
+        client_socket.send(response.encode("utf-8"))
     except Exception as e:
         print(f"Error when handling client: {e}")
     finally:
@@ -53,19 +96,12 @@ def run_server():
     port = 8000
 
     try:
-        # Cria um objeto socket
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # Vincula o socket para um especifico endereco e porta
         server.bind((server_ip, port))
-
-        # Escuta as conexões recebidas
         server.listen()
         print(f"Listening on {server_ip}:{port}")
 
-        # Recebe dados do cliente
         while True:
-            # Aceitar conexoes de entrada
             client_socket, addr = server.accept()
             print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
