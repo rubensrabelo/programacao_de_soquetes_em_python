@@ -7,7 +7,7 @@ import os
 USERS_FILE = "users.csv"
 
 if not os.path.exists(USERS_FILE):
-    df = pd.DataFrame(columns=["email", "password"])
+    df = pd.DataFrame(columns=["id", "email", "password"])
     df.to_csv(USERS_FILE, index=False)
 
 
@@ -31,9 +31,14 @@ def check_password(email, password):
 def register_user(email, password):
     if check_user_exists(email):
         return False
+    df = pd.read_csv(USERS_FILE)
+    if df.empty:
+        id = 1
+    else:
+        id = df["id"].max() + 1
     hashed_password = hash_password(password)
     with open(USERS_FILE, "a", newline="", encoding="utf-8") as file:
-        file.write(f"{email},{hashed_password}\n")
+        file.write(f"{id},{email},{hashed_password}\n")
     return True
 
 
