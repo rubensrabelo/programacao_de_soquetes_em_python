@@ -1,7 +1,7 @@
 import socket
 import threading
 from services.handle_client import HandleClient
-from server.services.user_manager import UserCSV
+from server.services.user_manager import UserManager
 
 
 def run_server():
@@ -18,7 +18,7 @@ def run_server():
             client_socket, addr = server.accept()
             print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
-            handle_client = HandleClient(client_socket, addr, UserCSV())
+            handle_client = HandleClient(client_socket, addr, UserManager())
             thread = threading.Thread(target=handle_client.handle_client)
             thread.start()
     except Exception as e:
