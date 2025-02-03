@@ -1,7 +1,7 @@
 import socket
 import threading
 from services.handle_client import HandleClient
-from server.services.user_manager import UserManager
+from services.user_manager import UserManager
 
 
 def run_server():
