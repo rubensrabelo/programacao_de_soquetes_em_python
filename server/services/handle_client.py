@@ -12,35 +12,10 @@ class HandleClient:
                       .decode("utf-8").strip().lower())
 
             if choice == "no":
-                self.client_socket.send("Enter email: ".encode("utf-8"))
-                email = (self.client_socket.recv(1024)
-                         .decode("utf-8")
-                         .strip().lower())
-                self.client_socket.send("Enter password: ".encode("utf-8"))
-                password = (self.client_socket.recv(1024)
-                            .decode("utf-8").strip())
-
-                if self.user_csv.register_user(email, password):
-                    self.client_socket.send(
-                        "Registration successful! Please log in."
-                        .encode("utf-8"))
-                else:
-                    self.client_socket.send(
-                        "Email already registered. Try logging in."
-                        .encode("utf-8"))
-                    self.client_socket.close()
+                if not self.register_client():
                     return
 
-            self.client_socket.send("Enter email: ".encode("utf-8"))
-            email = self.client_socket.recv(1024).decode("utf-8").strip()
-            self.client_socket.send("Enter password: ".encode("utf-8"))
-            password = self.client_socket.recv(1024).decode("utf-8").strip()
-
-            if self.user_csv.check_password(email, password):
-                self.client_socket.send("authenticated".encode("utf-8"))
-            else:
-                self.client_socket.send("denied".encode("utf-8"))
-                self.client_socket.close()
+            if not self.login_client():
                 return
 
             while True:
@@ -49,7 +24,7 @@ class HandleClient:
                 if request.lower() == "close":
                     self.client_socket.send("closed".encode("utf-8"))
                     break
-                print(f"Received from {email}: {request}")
+                print(f"Received from client: {request}")
 
                 response = "accepted"
                 self.client_socket.send(response.encode("utf-8"))
@@ -59,3 +34,38 @@ class HandleClient:
             self.client_socket.close()
             print(
                 f"Connection to client ({self.addr[0]}:{self.addr[1]}) closed")
+
+    def register_client(self):
+        self.client_socket.send("Enter email: ".encode("utf-8"))
+        email = (self.client_socket.recv(1024)
+                 .decode("utf-8")
+                 .strip().lower())
+        self.client_socket.send("Enter password: ".encode("utf-8"))
+        password = (self.client_socket.recv(1024)
+                    .decode("utf-8").strip())
+
+        if self.user_csv.register_user(email, password):
+            self.client_socket.send(
+                "Registration successful! Please log in."
+                .encode("utf-8"))
+            return True
+        else:
+            self.client_socket.send(
+                "Email already registered. Try logging in."
+                .encode("utf-8"))
+            self.client_socket.close()
+            return False
+
+    def login_client(self):
+        self.client_socket.send("Enter email: ".encode("utf-8"))
+        email = self.client_socket.recv(1024).decode("utf-8").strip()
+        self.client_socket.send("Enter password: ".encode("utf-8"))
+        password = self.client_socket.recv(1024).decode("utf-8").strip()
+
+        if self.user_csv.check_password(email, password):
+            self.client_socket.send("authenticated".encode("utf-8"))
+            return True
+        else:
+            self.client_socket.send("denied".encode("utf-8"))
+            self.client_socket.close()
+            return False
