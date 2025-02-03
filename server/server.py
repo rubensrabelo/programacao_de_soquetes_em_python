@@ -1,7 +1,7 @@
 import socket
 import threading
 from services.handle_client import HandleClient
-from services.user_csv import UserCSV
+from server.services.user_manager import UserCSV
 
 
 def run_server():

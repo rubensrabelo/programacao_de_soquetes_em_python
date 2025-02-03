@@ -3,7 +3,7 @@ import bcrypt
 import os
 
 
-class UserCSV():
+class UserManager():
     USERS_FILE = "users.csv"
 
     def __init__(self):
