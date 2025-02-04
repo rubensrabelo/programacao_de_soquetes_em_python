@@ -10,9 +10,9 @@ class FinancialManager():
         ]
 
     def __init__(self):
-        if not os.path.exists(self.FinancialManager):
+        if not os.path.exists(self.FINANCIAL_MANAGER):
             df = pd.DataFrame(columns=self.COLUMNS)
-            df.to_csv(df, index=False)
+            df.to_csv(self.FINANCIAL_MANAGER, index=False)
 
     def get_next_id(self):
         df = pd.read_csv(self.FINANCIAL_MANAGER)
@@ -29,17 +29,17 @@ class FinancialManager():
             file.write(data)
         return id
 
-    def update_data(self, tr_flow, category, value):
+    def update_data(self, id_data, tr_flow, category, value):
         df = pd.read_csv(self.FINANCIAL_MANAGER)
-        if id in df["id"].values:
-            index = df[df["id"] != id].index(0)
+        if id_data in df["id"].values:
+            index = df[df["id"] == id_data].index[0]
             if tr_flow:
                 df.at[index, "transfer_flow"] = tr_flow
             if category:
                 df.at[index, "category"] = category
             if value is not None:
                 df.at[index, "value"] = value
-            df.to_csv(self.FINANCIAL_FILE, index=False)
+            df.to_csv(self.FINANCIAL_MANAGER, index=False)
             return True
         return False
 
