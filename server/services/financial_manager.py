@@ -16,7 +16,7 @@ class FinancialManager():
 
     def get_next_id(self):
         df = pd.read_csv(self.FINANCIAL_MANAGER)
-        return 1 if df.empty else df["id"].max() + 1
+        return 1 if df.empty else int(df["id"].max() + 1)
 
     def add_data(self, tr_flow, category, value, user_id):
         id = self.get_next_id()
@@ -45,6 +45,7 @@ class FinancialManager():
 
     def remove_data(self, id):
         df = pd.read_csv(self.FINANCIAL_MANAGER)
+        id = int(id)
         if id in df["id"].values:
             df = df[df["id"] != id]
             df.to_csv(self.FINANCIAL_MANAGER, index=False)
