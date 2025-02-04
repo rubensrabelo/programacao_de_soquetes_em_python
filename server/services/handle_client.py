@@ -28,11 +28,24 @@ class HandleClient:
                 return
 
             while True:
+                self.client_socket.send(
+                    "Choose an option: [add, remove, edit, close]:"
+                    .encode("utf-8")
+                )
                 request = self.client_socket.recv(1024).decode("utf-8")
-                print(request)
-                if request.lower() == "close":
+
+                if request == "add":
+                    self.add_data()
+                elif request == "remove":
+                    self.remove_data()
+                elif request == "edit":
+                    self.update_data()
+                elif request.lower() == "close":
                     self.client_socket.send("closed".encode("utf-8"))
                     break
+                else:
+                    self.client_socket.send("Invalid option. Try again."
+                                            .encode("utf-8"))
                 print(f"Received from client: {request}")
 
                 response = "accepted"
@@ -62,7 +75,6 @@ class HandleClient:
             self.client_socket.send(
                 "Email already registered. Try logging in."
                 .encode("utf-8"))
-            self.client_socket.close()
             return False
 
     def login_client(self):
@@ -71,8 +83,10 @@ class HandleClient:
         self.client_socket.send("Enter password: ".encode("utf-8"))
         password = self.client_socket.recv(1024).decode("utf-8").strip()
 
+        user_id = self.user_manager.get_user_id(email)
         if self.user_manager.check_password(email, password):
             self.client_socket.send("authenticated".encode("utf-8"))
+            self.user_id = user_id
             return True
         else:
             self.client_socket.send("denied".encode("utf-8"))
