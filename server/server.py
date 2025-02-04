@@ -2,6 +2,7 @@ import socket
 import threading
 from services.handle_client import HandleClient
 from services.user_manager import UserManager
+from services.financial_manager import FinancialManager
 
 
 def run_server():
@@ -18,9 +19,17 @@ def run_server():
             client_socket, addr = server.accept()
             print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
-            handle_client = HandleClient(client_socket, addr, UserManager())
+            handle_client = HandleClient(
+                client_socket,
+                addr,
+                UserManager(),
+                FinancialManager(),
+                user_id=None
+                )
             thread = threading.Thread(target=handle_client.handle_client)
             thread.start()
+    except KeyboardInterrupt:
+        print("\nServer shutting down gracefully...")
     except Exception as e:
         print(f"Error: {e}")
     finally:
