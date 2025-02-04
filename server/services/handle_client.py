@@ -53,7 +53,7 @@ class HandleClient:
         password = (self.client_socket.recv(1024)
                     .decode("utf-8").strip())
 
-        if self.user_csv.register_user(email, password):
+        if self.user_manager.register_user(email, password):
             self.client_socket.send(
                 "Registration successful! Please log in."
                 .encode("utf-8"))
@@ -71,7 +71,7 @@ class HandleClient:
         self.client_socket.send("Enter password: ".encode("utf-8"))
         password = self.client_socket.recv(1024).decode("utf-8").strip()
 
-        if self.user_csv.check_password(email, password):
+        if self.user_manager.check_password(email, password):
             self.client_socket.send("authenticated".encode("utf-8"))
             return True
         else:
@@ -127,13 +127,13 @@ class HandleClient:
             self.client_socket.send("Transaction updated successfully."
                                     .encode("utf-8"))
         else:
-            self.client_socket.send("Transaction updated successfully."
+            self.client_socket.send("Transaction not found."
                                     .encode("utf-8"))
 
     def remove_data(self):
         self.client_socket.send("Enter category ID to remove: "
                                 .encode("utf-8"))
-        id_data = self.client_socket.recv(1024).decode("utf-8").strip()
+        id_data = int(self.client_socket.recv(1024).decode("utf-8").strip())
 
         if self.financial_manager.remove_data(id_data):
             self.client_socket.send("Transaction removed successfully."
