@@ -62,7 +62,6 @@ def interact_with_server(client):
             print("Exiting...")
             break
         else:
-            print(choice)
             print("Invalid option. Try again.")
 
         # print(f"Received: {response}")
@@ -79,14 +78,14 @@ def handle_financial_manager(client):
             if choice.lower() == "add":
                 handle_add_transaction(client)
             elif choice.lower() == "edit":
-                handle_remove_transaction(client)
-            elif choice.lower() == "remove":
                 handle_update_transaction(client)
-            elif choice.lower() == "clode":
+            elif choice.lower() == "remove":
+                handle_remove_transaction(client)
+            elif choice.lower() == "close":
                 print("Closing connection...")
                 break
             else:
-                print("Invalid option. Try again.")
+                print("Invalid option. Try again.\n")
 
 
 def handle_add_transaction(client):

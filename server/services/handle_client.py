@@ -34,11 +34,11 @@ class HandleClient:
                 )
                 request = self.client_socket.recv(1024).decode("utf-8")
 
-                if request == "add":
+                if request.lower() == "add":
                     self.add_data()
-                elif request == "remove":
+                elif request.lower() == "remove":
                     self.remove_data()
-                elif request == "edit":
+                elif request.lower() == "edit":
                     self.update_data()
                 elif request.lower() == "close":
                     self.client_socket.send("closed".encode("utf-8"))
@@ -48,7 +48,7 @@ class HandleClient:
                                             .encode("utf-8"))
                 print(f"Received from client: {request}")
 
-                response = "accepted"
+                response = "accepted\n"
                 self.client_socket.send(response.encode("utf-8"))
         except Exception as e:
             print(f"Error when handling client: {e}")
@@ -115,7 +115,7 @@ class HandleClient:
     def update_data(self):
         self.client_socket.send("Enter transaction ID to edit: "
                                 .encode("utf-8"))
-        id_data = int(self.client_socket.recv(1024).decode("utf-8").strip())
+        id_data = self.client_socket.recv(1024).decode("utf-8").strip()
 
         self.client_socket.send(
             "Enter new transaction type (leave empty to keep current): "
@@ -134,7 +134,7 @@ class HandleClient:
             .encode("utf-8"))
         value = self.client_socket.recv(1024).decode("utf-8").strip()
         value = float(value) if value else None
-        if self.financial_manager.update_data(id_data,
+        if self.financial_manager.update_data(int(id_data),
                                               tr_flow,
                                               category,
                                               value):
