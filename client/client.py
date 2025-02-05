@@ -47,7 +47,7 @@ def interact_with_server(client):
     while True:
         text = """Enter one of the options: [1] 'Financial' or [2] 'Exit'"""
         print(text)
-        choice = int(input(">> "))
+        choice = input(">> ")
         client.send(choice.encode("utf-8")[:1024])
 
         response = client.recv(1024).decode("utf-8")
@@ -62,6 +62,7 @@ def interact_with_server(client):
             print("Exiting...")
             break
         else:
+            print(choice)
             print("Invalid option. Try again.")
 
         # print(f"Received: {response}")
@@ -70,7 +71,7 @@ def interact_with_server(client):
 def handle_financial_manager(client):
     while True:
         response = client.recv(1024).decode("utf-8")
-        if response:
+        if "Choose an option" in response:
             print(response)
             choice = input(">> ")
             client.send(choice.encode("utf-8"))
