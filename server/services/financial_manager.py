@@ -51,3 +51,19 @@ class FinancialManager():
             df.to_csv(self.FINANCIAL_MANAGER, index=False)
             return True
         return False
+
+    def get_today_values(self, user_id):
+        if not os.path.exists(self.FINANCIAL_MANAGER):
+            return []
+
+        df = pd.read_csv(self.FINANCIAL_MANAGER)
+
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        filtered_df = df[
+            (df["user_id"] == user_id) &
+            (df["timestamp"].dt.strftime("%Y-%m-%d")) == today
+            ]
+
+        return filtered_df
