@@ -164,8 +164,7 @@ class HandleClient:
                 "No transactions found for today.\n".encode("utf-8")
                 )
             return
-        response = "Today's transactions:\n"
-        response += "\n".join(
+        response = "\n".join(
             [
                 f"Timestamp: {entry['timestamp']}, Type: {entry[
                     'transfer_flow'
@@ -173,5 +172,5 @@ class HandleClient:
                 f"Category: {entry['category']}, Value: {entry['value']}"
                 for entry in values
                 ]
-        ) + "\n"
+        )
         self.client_socket.send(response.encode("utf-8"))
