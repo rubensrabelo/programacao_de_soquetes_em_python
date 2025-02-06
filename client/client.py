@@ -81,6 +81,8 @@ def handle_financial_manager(client):
                 handle_update_transaction(client)
             elif choice.lower() == "remove":
                 handle_remove_transaction(client)
+            elif choice.lower() == "view":
+                handle_view_today_transaction(client)
             elif choice.lower() == "close":
                 print("Closing connection...")
                 break
@@ -140,6 +142,17 @@ def handle_remove_transaction(client):
     client.send(id_data.encode("utf-8"))
     response = client.recv(1024).decode("utf-8")
     print(response)
+
+
+def handle_view_today_transaction(client):
+    client.send("today_transactions".encode("utf-8"))
+    response = client.recv(4096).decode("utf-8")
+
+    if response == "No transactions found for today.":
+        print(response)
+    else:
+        transactions = response.split("\n")
+        print("\n".join(transactions))
 
 
 def run_client():
