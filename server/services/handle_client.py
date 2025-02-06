@@ -29,7 +29,7 @@ class HandleClient:
 
             while True:
                 self.client_socket.send(
-                    "Choose an option: [add, remove, edit, close]:"
+                    "Choose an option: [add, remove, edit, view, close]:"
                     .encode("utf-8")
                 )
                 request = self.client_socket.recv(1024).decode("utf-8")
@@ -40,6 +40,8 @@ class HandleClient:
                     self.remove_data()
                 elif request.lower() == "edit":
                     self.update_data()
+                elif request.lower() == "view":
+                    self.get_today_values()
                 elif request.lower() == "close":
                     self.client_socket.send("closed".encode("utf-8"))
                     break
@@ -154,3 +156,22 @@ class HandleClient:
                                     .encode("utf-8"))
         else:
             self.client_socket.send("Transaction not found.".encode("utf-8"))
+
+    def get_today_values(self):
+        values = self.financial_manager.get_today_values(self.user_id)
+        if not values:
+            self.client_socket.send(
+                "No transactions found for today.\n".encode("utf-8")
+                )
+            return
+        response = "Today's transactions:\n" 
+        response += "\n".join(
+            [
+                f"Timestamp: {entry['timestamp']}, Type: {entry[
+                    'transfer_flow'
+                    ]}, "
+                f"Category: {entry['category']}, Value: {entry['value']}" 
+                for entry in values
+                ]
+        ) + "\n"
+        self.client_socket.send(response.encode("utf-8"))
