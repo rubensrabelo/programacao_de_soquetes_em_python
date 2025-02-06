@@ -66,4 +66,12 @@ class FinancialManager():
             (df["timestamp"].dt.strftime("%Y-%m-%d")) == today
             ]
 
+        filtered_df = filtered_df.loc[:,
+                                      [
+                                          "transfer_flow",
+                                          "category",
+                                          "value"
+                                          ]
+                                      ].to_dict(orient="records")
+
         return filtered_df
