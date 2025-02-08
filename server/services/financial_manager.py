@@ -58,12 +58,11 @@ class FinancialManager():
 
         df = pd.read_csv(self.FINANCIAL_MANAGER)
 
-        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        # today = datetime.datetime.now().strftime("%Y-%m-%d")
 
         df["timestamp"] = pd.to_datetime(df["timestamp"])
         filtered_df = df[
-            (df["user_id"] == user_id) &
-            (df["timestamp"].dt.strftime("%Y-%m-%d")) == today
+            (df["user_id"] == user_id)
             ]
 
         filtered_df = filtered_df.loc[:,

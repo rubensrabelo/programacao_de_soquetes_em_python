@@ -166,9 +166,7 @@ class HandleClient:
             return
         response = "\n".join(
             [
-                f"Timestamp: {entry['timestamp']}, Type: {entry[
-                    'transfer_flow'
-                    ]}, "
+                f"Type: {entry['transfer_flow']}, "
                 f"Category: {entry['category']}, Value: {entry['value']}"
                 for entry in values
                 ]
