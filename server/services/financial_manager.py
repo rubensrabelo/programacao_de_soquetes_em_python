@@ -60,7 +60,7 @@ class FinancialManager():
 
         # today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        # df["timestamp"] = pd.to_datetime(df["timestamp"])
         filtered_df = df[
             (df["user_id"] == user_id)
             ]
