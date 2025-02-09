@@ -176,20 +176,17 @@ class HandleClient:
         self.client_socket.send(response.encode("utf-8"))
 
     def calculate_installment(self):
+        self.client_socket.send("Calculate Installment:".encode("utf-8"))
         self.client_socket.send(
             "Enter number of installments: ".encode("utf-8")
             )
-        num_installments = (self.client_socket.recv(1024).decode("utf-8"))
+        num_installments = (self.client_socket.recv(1024).decode("utf-8").strip())
 
-        # try:
-        #     num_installments = int(num_installments)
-        # except ValueError:
-        #     self.client_socket.send("Invalid number of installments. Please enter a valid integer.".encode("utf-8"))
-        #     return
-
-        num_installments = (
-            self.client_socket.recv(1024).decode("utf-8").strip()
-            )
+        try:
+            num_installments = int(num_installments)
+        except ValueError:
+            self.client_socket.send(f"Invalid number of installments. Please enter a valid integer.".encode("utf-8"))
+            return
 
         annual_interest_rate = 0.1
 
@@ -199,4 +196,12 @@ class HandleClient:
             num_installments
             )
 
-        self.client_socket.send(installment_details.encode("utf-8"))
+        response = "\n".join(
+            [
+                f"Month: {detail['Month']}, Installments: {detail['Installments']}, "
+                f"Fees: {detail['Fees']}, Amortization: {detail['Amortization']}, "
+                f"Debit balance: {detail['Debit balance']}"
+                for detail in installment_details
+            ]
+        )
+        self.client_socket.send(response.encode("utf-8"))

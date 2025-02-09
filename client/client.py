@@ -158,8 +158,9 @@ def handle_view_today_transaction(client):
 
 
 def handle_calculate_installment(client):
-    client.send("Calculate Installment:".encode("utf-8"))
-
+    response = client.recv(1024).decode("utf-8")
+    print(response)
+    
     response = client.recv(1024).decode("utf-8")
     print(response)
 
