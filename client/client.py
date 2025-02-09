@@ -174,29 +174,45 @@ def handle_calculate_installment(client):
 def run_client():
     # server_ip = "127.0.0.1"
     # port = 8000
+    while True:
+        client = connect_to_server()
+        retry_choice = "no"
 
-    client = connect_to_server()
+        try:
+            while True:
+                response = client.recv(1024).decode("utf-8")
+                print(response)
+                choice = input(">> ")
+                client.send(choice.encode("utf-8"))
 
-    try:
-        response = client.recv(1024).decode("utf-8")
-        print(response)
-        choice = input(">> ")
-        client.send(choice.encode("utf-8"))
+                if choice.lower() == "no":
+                    handle_registration(client)
 
-        if choice.lower() == "no":
-            handle_registration(client)
+                if handle_login(client):
+                    break
 
-        if not handle_login(client):
-            return
+                retry_choice = input("Login failed. Do you want to try again? (yes/no): ").strip()
+                if retry_choice.lower() != "yes":
+                    client.close()
+                    return
 
-        if client:
-            interact_with_server(client)
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        if "server" in locals():
-            client.close()
-            print("Connection to server closed")
+                print("Reconnecting...")
+                client.close()
+                break
+
+            if retry_choice.lower() == "yes":
+                continue
+
+            if client:
+                interact_with_server(client)
+                client.close()
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            if "client" in locals():
+                client.close()
+                print("Connection to server closed")
+                break
 
 
 if __name__ == "__main__":
