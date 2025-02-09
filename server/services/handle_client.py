@@ -172,3 +172,20 @@ class HandleClient:
                 ]
         )
         self.client_socket.send(response.encode("utf-8"))
+
+    def calculate_installment(self):
+        self.client_socket.send(
+            "Enter number of installments: ".encode("utf-8")
+            )
+        num_installments = int(
+            self.client_socket.recv(1024).decode("utf-8").strip()
+            )
+
+        annual_interest_rate = 0.1
+
+        installment_details = self.financial_manager.calculate_installment(
+            annual_interest_rate,
+            num_installments
+            )
+
+        self.client_socket.send(installment_details.encode("utf-8"))
