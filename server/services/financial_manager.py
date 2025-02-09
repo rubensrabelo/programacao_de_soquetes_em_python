@@ -76,8 +76,16 @@ class FinancialManager():
         return filtered_df
 
     def calculate_installment(
-            self, total_value, annual_interest_rate, num_installments
+            self, annual_interest_rate, num_installments
             ):
+        if not os.path.exists(self.FINANCIAL_MANAGER):
+            return []
+
+        df = pd.read_csv(self.FINANCIAL_MANAGER)
+        user_transactions = df[df["user_id"] == self.user_id]
+
+        total_value = user_transactions["value"].sum()
+
         monthly_interest_rate = (annual_interest_rate / 100) / 12
 
         if annual_interest_rate == 0:
