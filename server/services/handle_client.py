@@ -29,7 +29,7 @@ class HandleClient:
 
             while True:
                 self.client_socket.send(
-                    "Choose an option: [add, remove, edit, view, close]:"
+                    "Choose an option: [add, remove, edit, view, calculate, close]:"
                     .encode("utf-8")
                 )
                 request = self.client_socket.recv(1024).decode("utf-8")
@@ -42,6 +42,8 @@ class HandleClient:
                     self.update_data()
                 elif request.lower() == "view":
                     self.get_today_values()
+                elif request.lower() == "calculate":
+                    self.calculate_installment()
                 elif request.lower() == "close":
                     self.client_socket.send("closed".encode("utf-8"))
                     break
@@ -177,13 +179,22 @@ class HandleClient:
         self.client_socket.send(
             "Enter number of installments: ".encode("utf-8")
             )
-        num_installments = int(
+        num_installments = (self.client_socket.recv(1024).decode("utf-8"))
+
+        # try:
+        #     num_installments = int(num_installments)
+        # except ValueError:
+        #     self.client_socket.send("Invalid number of installments. Please enter a valid integer.".encode("utf-8"))
+        #     return
+
+        num_installments = (
             self.client_socket.recv(1024).decode("utf-8").strip()
             )
 
         annual_interest_rate = 0.1
 
         installment_details = self.financial_manager.calculate_installment(
+            self.user_id,
             annual_interest_rate,
             num_installments
             )

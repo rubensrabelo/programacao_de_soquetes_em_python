@@ -83,6 +83,8 @@ def handle_financial_manager(client):
                 handle_remove_transaction(client)
             elif choice.lower() == "view":
                 handle_view_today_transaction(client)
+            elif choice.lower() == "calculate":
+                handle_calculate_installment(client)
             elif choice.lower() == "close":
                 print("Closing connection...")
                 break
@@ -153,6 +155,19 @@ def handle_view_today_transaction(client):
     else:
         transactions = response.split("\n")
         print("\n".join(transactions))
+
+
+def handle_calculate_installment(client):
+    client.send("Calculate Installment:".encode("utf-8"))
+
+    response = client.recv(1024).decode("utf-8")
+    print(response)
+
+    num_installments = input(">> ")
+    client.send(num_installments.encode("utf-8"))
+
+    response = client.recv(4096).decode("utf-8")
+    print(response)
 
 
 def run_client():
