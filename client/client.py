@@ -37,10 +37,10 @@ def handle_login(client):
     if auth_response == "denied":
         print("Login failed. Closing connection.")
         client.close()
-        return
+        return False
 
     print("Login successful!")
-    return client
+    return True
 
 
 def interact_with_server(client):
@@ -160,7 +160,7 @@ def handle_view_today_transaction(client):
 def handle_calculate_installment(client):
     response = client.recv(1024).decode("utf-8")
     print(response)
-    
+
     response = client.recv(1024).decode("utf-8")
     print(response)
 
@@ -186,7 +186,8 @@ def run_client():
         if choice.lower() == "no":
             handle_registration(client)
 
-        handle_login(client)
+        if not handle_login(client):
+            return
 
         if client:
             interact_with_server(client)
