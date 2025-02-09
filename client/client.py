@@ -174,11 +174,11 @@ def handle_calculate_installment(client):
 def run_client():
     # server_ip = "127.0.0.1"
     # port = 8000
-    while True:
-        client = connect_to_server()
-        retry_choice = "no"
+    try:
+        while True:
+            client = connect_to_server()
+            retry_choice = "no"
 
-        try:
             while True:
                 response = client.recv(1024).decode("utf-8")
                 print(response)
@@ -206,13 +206,13 @@ def run_client():
             if client:
                 interact_with_server(client)
                 client.close()
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            if "client" in locals():
-                client.close()
-                print("Connection to server closed")
                 break
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        if "client" in locals():
+            client.close()
+            print("Connection to server closed")
 
 
 if __name__ == "__main__":
