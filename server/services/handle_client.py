@@ -57,7 +57,7 @@ class HandleClient:
         except Exception as e:
             print(f"Error when handling client: {e}")
         finally:
-            self.client_socket.close()
+            # self.client_socket.close()
             print(
                 f"Connection to client ({self.addr[0]}:{self.addr[1]}) closed")
 

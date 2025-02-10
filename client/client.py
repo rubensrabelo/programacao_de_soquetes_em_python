@@ -60,7 +60,7 @@ def interact_with_server(client):
             handle_financial_manager(client)
         elif choice == "2":
             print("Exiting...")
-            break
+            return
         else:
             print("Invalid option. Try again.")
 
@@ -87,7 +87,7 @@ def handle_financial_manager(client):
                 handle_calculate_installment(client)
             elif choice.lower() == "close":
                 print("Closing connection...")
-                break
+                return
             else:
                 print("Invalid option. Try again.\n")
 
