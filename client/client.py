@@ -178,6 +178,7 @@ def run_client():
         while True:
             client = connect_to_server()
             retry_choice = "no"
+            register_success = True
 
             while True:
                 response = client.recv(1024).decode("utf-8")
@@ -186,7 +187,9 @@ def run_client():
                 client.send(choice.encode("utf-8"))
 
                 if choice.lower() == "no":
-                    handle_registration(client)
+                    register_success = handle_registration(client)
+                    if not register_success:
+                        break
 
                 if handle_login(client):
                     break
@@ -200,7 +203,7 @@ def run_client():
                 client.close()
                 break
 
-            if retry_choice.lower() == "yes":
+            if retry_choice.lower() == "yes" or not register_success:
                 continue
 
             if client:
