@@ -160,6 +160,8 @@ class HandleClient:
             self.client_socket.send("Transaction not found.".encode("utf-8"))
 
     def get_today_values(self):
+        self.client_socket.send("today_transactions".encode("utf-8"))
+
         values = self.financial_manager.get_today_values(self.user_id)
         if not values:
             self.client_socket.send(

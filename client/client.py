@@ -147,7 +147,9 @@ def handle_remove_transaction(client):
 
 
 def handle_view_today_transaction(client):
-    client.send("today_transactions".encode("utf-8"))
+    response = client.recv(4096).decode("utf-8")
+    print(response)
+
     response = client.recv(4096).decode("utf-8")
 
     if response == "No transactions found for today.":
