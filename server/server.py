@@ -6,7 +6,7 @@ from services.financial_manager import FinancialManager
 
 
 def run_server():
-    server_ip = "127.0.0.1"
+    server_ip = "0.0.0.0"  # Agora aceita conexões de qualquer IP na rede local
     port = 8000
 
     try:
@@ -19,6 +19,14 @@ def run_server():
                 client_socket, addr = server.accept()
                 print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
+                # Recebendo o IP local enviado pelo cliente
+                try:
+                    client_ip = client_socket.recv(1024).decode("utf-8")
+                    print(f"Client's local IP: {client_ip}")
+                except Exception as e:
+                    print(f"Failed to receive client IP: {e}")
+
+                # Criando e iniciando a thread para lidar com o cliente
                 handle_client = HandleClient(
                     client_socket,
                     addr,
