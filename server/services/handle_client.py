@@ -122,19 +122,19 @@ class HandleClient:
         id_data = self.client_socket.recv(1024).decode("utf-8").strip()
 
         self.client_socket.send(
-            "Enter new transaction type (leave empty to keep current): "
+            "Enter new transaction type: "
             .encode("utf-8"))
         tr_flow = self.client_socket.recv(1024).decode("utf-8").strip() or None
 
         self.client_socket.send(
-            "Enter new category (leave empty to keep current): "
+            "Enter new category: "
             .encode("utf-8"))
         category = (
             self.client_socket.recv(1024).decode("utf-8").strip() or None
             )
 
         self.client_socket.send(
-            "Enter new value (leave empty to keep current): "
+            "Enter new value: "
             .encode("utf-8"))
         value = self.client_socket.recv(1024).decode("utf-8").strip()
         value = float(value) if value else None
@@ -190,7 +190,7 @@ class HandleClient:
             self.client_socket.send(f"Invalid number of installments. Please enter a valid integer.".encode("utf-8"))
             return
 
-        annual_interest_rate = 0.1
+        annual_interest_rate = 10
 
         installment_details = self.financial_manager.calculate_installment(
             self.user_id,
