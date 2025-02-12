@@ -5,9 +5,24 @@ from services.user_manager import UserManager
 from services.financial_manager import FinancialManager
 
 
+def broadcast_listener(port=8000):
+    """ Responde às requisições de descoberta de clientes """
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        s.bind(("", port))
+
+        while True:
+            data, addr = s.recvfrom(1024)
+            if data == b"DISCOVERY_REQUEST":
+                s.sendto(b"DISCOVERY_RESPONSE", addr)
+
+
 def run_server():
-    server_ip = "0.0.0.0"  # Agora aceita conexões de qualquer IP na rede local
+    server_ip = "0.0.0.0"  # Aceita conexões de qualquer IP na rede local
     port = 8000
+
+    # Inicia a thread para responder ao discovery dos clientes
+    threading.Thread(target=broadcast_listener, daemon=True).start()
 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
@@ -19,14 +34,12 @@ def run_server():
                 client_socket, addr = server.accept()
                 print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
-                # Recebendo o IP local enviado pelo cliente
                 try:
                     client_ip = client_socket.recv(1024).decode("utf-8")
                     print(f"Client's local IP: {client_ip}")
                 except Exception as e:
                     print(f"Failed to receive client IP: {e}")
 
-                # Criando e iniciando a thread para lidar com o cliente
                 handle_client = HandleClient(
                     client_socket,
                     addr,
