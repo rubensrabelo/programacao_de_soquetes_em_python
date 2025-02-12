@@ -3,10 +3,9 @@ from screen.display import Display
 
 
 def get_local_ip():
-    """ Obtém o IP local correto da rede (não 127.0.0.1) """
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))  # Conexão temporária para determinar o IP local
+            s.connect(("8.8.8.8", 80))
             return s.getsockname()[0]
     except Exception as e:
         print(f"Could not determine local IP: {e}")
@@ -14,35 +13,33 @@ def get_local_ip():
 
 
 def discover_server_ip(port=8000):
-    """ Descobre automaticamente o IP do servidor na rede local via broadcast """
-    print("Procurando o servidor na rede...")
-    
+    print("Searching for the server on the network...")
+
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        s.settimeout(3)  # Tempo limite para evitar travamento
+        s.settimeout(3)
 
         try:
             s.sendto(b"DISCOVERY_REQUEST", ("255.255.255.255", port))
             data, addr = s.recvfrom(1024)  # Aguarda resposta do servidor
             return addr[0]  # Retorna o IP do servidor que respondeu
         except socket.timeout:
-            print("Nenhuma resposta do servidor.")
+            print("No response from server.")
             return None
 
 
 def connect_to_server():
-    """ Permite ao usuário escolher entre descoberta automática ou entrada manual do IP """
-    server_ip = discover_server_ip()  # Tenta descobrir o servidor automaticamente
+    server_ip = discover_server_ip()
 
     if not server_ip:
-        server_ip = input("Digite o IP do servidor: ").strip()  # Alternativa manual
+        server_ip = input("Enter the server IP: ").strip()
 
     port = 8000
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
         client.connect((server_ip, port))
-        print(f"Conectado ao servidor em {server_ip}:{port}")
+        print(f"Connected to the server at {server_ip}:{port}")
 
         # Obtém o IP local correto e envia ao servidor
         client_ip = get_local_ip()
@@ -50,7 +47,7 @@ def connect_to_server():
 
         return client
     except Exception as e:
-        print(f"Erro ao conectar ao servidor: {e}")
+        print(f"Error connecting to server: {e}")
         return None
 
 
@@ -59,7 +56,7 @@ def run_client():
         while True:
             client = connect_to_server()
             if not client:
-                retry = input("Falha na conexão. Tentar novamente? (yes/no): ").strip().lower()
+                retry = input("Connection failed. Try again? (yes/no): ").strip().lower()
                 if retry != "yes":
                     return
                 continue  # Volta para tentar de novo

@@ -6,7 +6,6 @@ from services.financial_manager import FinancialManager
 
 
 def broadcast_listener(port=8000):
-    """ Responde às requisições de descoberta de clientes """
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         s.bind(("", port))
@@ -18,10 +17,9 @@ def broadcast_listener(port=8000):
 
 
 def run_server():
-    server_ip = "0.0.0.0"  # Aceita conexões de qualquer IP na rede local
+    server_ip = "0.0.0.0"
     port = 8000
 
-    # Inicia a thread para responder ao discovery dos clientes
     threading.Thread(target=broadcast_listener, daemon=True).start()
 
     try:
