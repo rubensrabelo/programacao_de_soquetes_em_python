@@ -85,43 +85,24 @@ class FinancialManager():
         user_transactions = df[df["user_id"] == user_id]
 
         total_value = user_transactions["value"].sum()
-
         monthly_interest_rate = (annual_interest_rate / 100) / 12
 
-        if annual_interest_rate == 0:
-            fixed_installment = total_value / num_installments
-            return [
-                {
-                    "Month": month,
-                    "Installments": round(fixed_installment, 2),
-                    "Fees": 0.0,
-                    "Amortization": round(fixed_installment, 2),
-                    "Debit balance": round(
-                        total_value - month * fixed_installment, 2
-                        )
-                    } for month in range(1, num_installments + 1)
-                    ]
-        else:
-            fixed_installment = total_value * (monthly_interest_rate * (1 + monthly_interest_rate) ** num_installments) / \
-                    ((1 + monthly_interest_rate) ** num_installments - 1)
-
+        # Amortização constante (SAC)
+        amortization = total_value / num_installments
         debit_balance = total_value
         installment_details = []
 
         for month in range(1, num_installments + 1):
             fees = debit_balance * monthly_interest_rate
-            amortization = fixed_installment - fees
+            installment = amortization + fees
             debit_balance -= amortization
 
             installment_details.append({
                 "Month": month,
-                "Installments": round(fixed_installment, 2),
+                "Installments": round(installment, 2),
                 "Fees": round(fees, 2),
                 "Amortization": round(amortization, 2),
-                "Debit balance": (
-                    round(debit_balance, 2)
-                    if debit_balance > 0 else 0.0
-                    )
+                "Debit balance": round(debit_balance, 2) if debit_balance > 0 else 0.0
             })
 
         return installment_details

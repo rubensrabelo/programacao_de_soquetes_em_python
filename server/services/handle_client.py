@@ -190,7 +190,7 @@ class HandleClient:
             self.client_socket.send(f"Invalid number of installments. Please enter a valid integer.".encode("utf-8"))
             return
 
-        annual_interest_rate = 10
+        annual_interest_rate = 2
 
         installment_details = self.financial_manager.calculate_installment(
             self.user_id,
