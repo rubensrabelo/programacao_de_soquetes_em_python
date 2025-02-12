@@ -10,30 +10,28 @@ def run_server():
     port = 8000
 
     try:
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((server_ip, port))
-        server.listen()
-        print(f"Listening on {server_ip}:{port}")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+            server.bind((server_ip, port))
+            server.listen()
+            print(f"Listening on {server_ip}:{port}")
 
-        while True:
-            client_socket, addr = server.accept()
-            print(f"Accepted connection from {addr[0]}:{addr[1]}")
+            while True:
+                client_socket, addr = server.accept()
+                print(f"Accepted connection from {addr[0]}:{addr[1]}")
 
-            handle_client = HandleClient(
-                client_socket,
-                addr,
-                UserManager(),
-                FinancialManager(),
-                user_id=None
+                handle_client = HandleClient(
+                    client_socket,
+                    addr,
+                    UserManager(),
+                    FinancialManager(),
+                    user_id=None
                 )
-            thread = threading.Thread(target=handle_client.handle_client)
-            thread.start()
+                thread = threading.Thread(target=handle_client.handle_client)
+                thread.start()
     except KeyboardInterrupt:
         print("\nServer shutting down gracefully...")
     except Exception as e:
         print(f"Error: {e}")
-    finally:
-        server.close()
 
 
 if __name__ == "__main__":
