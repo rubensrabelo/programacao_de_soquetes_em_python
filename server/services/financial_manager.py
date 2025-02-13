@@ -64,9 +64,10 @@ class FinancialManager():
         filtered_df = df[
             (df["user_id"] == user_id)
             ]
-        
+    
         filtered_df = filtered_df.loc[:,
                                       [
+                                          "id",
                                           "transfer_flow",
                                           "category",
                                           "value"
