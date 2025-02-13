@@ -21,8 +21,8 @@ def discover_server_ip(port=8000):
 
         try:
             s.sendto(b"DISCOVERY_REQUEST", ("255.255.255.255", port))
-            data, addr = s.recvfrom(1024)  # Aguarda resposta do servidor
-            return addr[0]  # Retorna o IP do servidor que respondeu
+            data, addr = s.recvfrom(1024)
+            return addr[0]
         except socket.timeout:
             print("No response from server.")
             return None
@@ -41,7 +41,6 @@ def connect_to_server():
         client.connect((server_ip, port))
         print(f"Connected to the server at {server_ip}:{port}")
 
-        # Obtém o IP local correto e envia ao servidor
         client_ip = get_local_ip()
         client.send(client_ip.encode("utf-8"))
 
@@ -59,7 +58,7 @@ def run_client():
                 retry = input("Connection failed. Try again? (yes/no): ").strip().lower()
                 if retry != "yes":
                     return
-                continue  # Volta para tentar de novo
+                continue
 
             retry_choice = "no"
             register_success = True

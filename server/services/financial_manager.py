@@ -58,13 +58,10 @@ class FinancialManager():
 
         df = pd.read_csv(self.FINANCIAL_MANAGER)
 
-        # today = datetime.datetime.now().strftime("%Y-%m-%d")
-
-        # df["timestamp"] = pd.to_datetime(df["timestamp"])
         filtered_df = df[
             (df["user_id"] == user_id)
             ]
-    
+
         filtered_df = filtered_df.loc[:,
                                       [
                                           "id",
@@ -88,7 +85,6 @@ class FinancialManager():
         total_value = user_transactions["value"].sum()
         monthly_interest_rate = (annual_interest_rate / 100) / 12
 
-        # Amortização constante (SAC)
         amortization = total_value / num_installments
         debit_balance = total_value
         installment_details = []
