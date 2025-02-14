@@ -8,7 +8,8 @@ Este é um sistema de gerenciamento de contas desenvolvido para a disciplina de 
 - **Bibliotecas**:  
   - [bcrypt](https://pypi.org/project/bcrypt/) - Hash de senhas  
   - [numpy](https://numpy.org/) - Operações matemáticas  
-  - [pandas](https://pandas.pydata.org/) - Manipulação de dados  
+  - [pandas](https://pandas.pydata.org/) - Manipulação de dados
+  - [pwinput](https://pypi.org/project/pwinput/) - Entrada de senha oculta
   - [python-dateutil](https://dateutil.readthedocs.io/en/stable/) - Gerenciamento de datas  
   - [pytz](https://pypi.org/project/pytz/) - Fuso horário  
   - [six](https://pypi.org/project/six/) - Compatibilidade entre versões do Python  
