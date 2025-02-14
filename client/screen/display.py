@@ -1,3 +1,6 @@
+import pwinput
+
+
 class Display:
     def __init__(self, client):
         self.client = client
@@ -10,7 +13,7 @@ class Display:
 
         response = self.client.recv(1024).decode("utf-8")
         print(response)
-        password = input(">> ")
+        password = pwinput.pwinput(">> ", mask="*")
         self.client.send(password.encode("utf-8"))
 
         response = self.client.recv(1024).decode("utf-8")
@@ -24,7 +27,7 @@ class Display:
 
         response = self.client.recv(1024).decode("utf-8")
         print(response)
-        password = input(">> ")
+        password = pwinput.pwinput(">> ", mask="*")
         self.client.send(password.encode("utf-8"))
 
         auth_response = self.client.recv(1024).decode("utf-8")
